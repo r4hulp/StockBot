@@ -1,5 +1,7 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
+using HtmlAgilityPack;
+using Newtonsoft.Json;
 using NSEBot.Service.Models;
 using System;
 using System.Collections.Generic;
@@ -9,19 +11,12 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace NSEBot.Service
 {
     public class NSEService : INSEService
     {
-        private readonly string get_quote_url = "https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?";
-        private readonly string stocks_csv_url = "http://www.nseindia.com/content/equities/EQUITY_L.csv";
-        private readonly string top_gainer_url = "http://www.nseindia.com/live_market/dynaContent/live_analysis/gainers/niftyGainers1.json";
-        private readonly string top_loser_url = "http://www.nseindia.com/live_market/dynaContent/live_analysis/losers/niftyLosers1.json";
-        private readonly string advances_declines_url = "http://www.nseindia.com/common/json/indicesAdvanceDeclines.json";
-        private readonly string index_url = "http://www.nseindia.com/homepage/Indices1.json";
-        private readonly string bhavcopy_base_url = "https://www.nseindia.com/content/historical/EQUITIES/%s/%s/cm%s%s%sbhav.csv.zip";
-        private readonly string bhavcopy_base_filename = "cm{0}{1}{2}bhav.csv";
 
         private HttpClient client;
 
@@ -34,18 +29,14 @@ namespace NSEBot.Service
         {
             request.Headers.Add("Accept", "*/*");
             request.Headers.Add("Accept-Language", "en-US,en;q=0.5");
-            request.Headers.Add("Host", "nseindia.com");
-            request.Headers.Add("Referer", "https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol=INFY&illiquid=0&smeFlag=0&itpFlag=0");
+            //request.Headers.Add("Host", "nseindia.com");
+            //request.Headers.Add("Referer", "http://query1.finance.yahoo.com/v8/finance/chart/INFY.NS?range=1d&includePrePost=false&interval=1h&corsDomain=in.finance.yahoo.com&.tsrc=finance");
             request.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0");
             request.Headers.Add("X-Requested-With", "XMLHttpRequest");
 
             return request;
         }
 
-        public string BuildUrlForQuote(string code)
-        {
-            throw new NotImplementedException();
-        }
 
         public string CleanServerResponse(string responseDictionary)
         {
@@ -82,48 +73,33 @@ namespace NSEBot.Service
             throw new NotImplementedException();
         }
 
-        public string GetQuote(string code)
+        public async Task<StockData> GetQuote(string code)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
 
-        public async Task<string> GetStockCodes()
-        {
-            string resp = string.Empty;
-            using (HttpClient client = new HttpClient())
+                    string url = $"https://query2.finance.yahoo.com/v7/finance/quote?formatted=true&crumb=PSoigjtfegE&lang=en-IN&region=IN&symbols={code}.NS&fields=messageBoardId%2ClongName%2CshortName%2CmarketCap%2CunderlyingSymbol%2CunderlyingExchangeSymbol%2CheadSymbolAsString%2CregularMarketPrice%2CregularMarketChange%2CregularMarketChangePercent%2CregularMarketVolume%2Cuuid%2CregularMarketOpen%2CfiftyTwoWeekLow%2CfiftyTwoWeekHigh&corsDomain=in.finance.yahoo.com";
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
+                    request = BuildNseHeaders(request);
+
+                    var response = await client.SendAsync(request);
+
+                    var html = await response.Content.ReadAsStringAsync();
+
+                    var parsedData = JsonConvert.DeserializeObject<StockData>(html);
+
+                    return parsedData;
+                };
+
+            }
+            catch (Exception ex)
             {
 
-                string url = this.stocks_csv_url;
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
-                request = BuildNseHeaders(request);
-
-                var response = await client.SendAsync(request);
-
-                using (TextReader input = new StreamReader(await response.Content.ReadAsStreamAsync()))
-                {
-                    var csv = new CsvReader(input);
-                    csv.Configuration.RegisterClassMap<StockCodesMap>();
-                    // Trim
-                    csv.Configuration.PrepareHeaderForMatch = header => header?.Trim();
-
-                    // Remove whitespace
-                    csv.Configuration.PrepareHeaderForMatch = header => header.Replace(" ", string.Empty);
-
-                    // Remove underscores
-                    csv.Configuration.PrepareHeaderForMatch = header => header.Replace("_", string.Empty);
-
-                    // Ignore case
-                    csv.Configuration.PrepareHeaderForMatch = header => header.ToLower();
-                    var records = csv.GetRecords<StockCodes>();
-
-                    var count = records.Count();
-                }
-
-
-            };
-
-            return resp;
-
+                //log this
+            }
+            return null;
         }
 
         public List<string> GetTopGainers()

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NSEBot.Service.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -11,9 +12,9 @@ namespace NSEBot.Service
     {
         bool IsValidCode(string code);
 
-        string GetQuote(string code);
+        Task<StockData> GetQuote(string code);
 
-        Task<string> GetStockCodes();
+
 
         List<string> GetTopGainers();
 
@@ -28,8 +29,6 @@ namespace NSEBot.Service
         string GetIndexQuote(string code);
 
         HttpRequestMessage BuildNseHeaders(HttpRequestMessage request);
-
-        string BuildUrlForQuote(string code);
 
         string CleanServerResponse(string responseDictionary);
 

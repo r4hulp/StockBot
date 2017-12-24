@@ -23,7 +23,6 @@ namespace NSEBot.Service.Models
         public StockCodesMap()
         {
             Map(m => m.Symbol).Index(0);
-            Map(m => m.NameOfCompany).Index(1);
         }
     }
 }
