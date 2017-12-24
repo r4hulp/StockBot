@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
+using NSEBot.Service;
 
 namespace NSEBot.Dialogs
 {
@@ -24,6 +25,10 @@ namespace NSEBot.Dialogs
 
             // return our reply to the user
             await context.PostAsync($"You sent {activity.Text} which was {length} characters");
+
+            INSEService nseService = new NSEService();
+
+            var resp = await nseService.GetStockCodes();
 
             context.Wait(MessageReceivedAsync);
         }
