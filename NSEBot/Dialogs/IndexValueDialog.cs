@@ -10,12 +10,16 @@ using System.Web;
 namespace NSEBot.Dialogs
 {
     [Serializable]
-    public class PriceCheckDialog : IDialog<string>
+    public class IndexValueDialog : IDialog<string>
     {
+        private readonly string code;
+        private string name;
         private int attempts = 3;
+
+
         public async Task StartAsync(IDialogContext context)
         {
-            await context.PostAsync("Enter company code.");
+            await context.PostAsync("Enter index code.");
 
             context.Wait(this.MessageReceivedAsync);
         }
@@ -24,14 +28,18 @@ namespace NSEBot.Dialogs
         {
             var message = await result;
 
+            var code = message.Text;
+
             IStockService nseService = new StockService();
 
-            var resp = await nseService.GetQuote(message.Text);
+            var resp = await nseService.GetIndexQuote(code);
 
-            var scrip = resp.quoteResponse.result.FirstOrDefault();
+            var current_price = resp.QuoteResponse.Result.FirstOrDefault().RegularMarketPrice.Fmt;
+            var current_change = resp.QuoteResponse.Result.FirstOrDefault().RegularMarketChange.Fmt;
 
 
-            context.Done($"Company : {scrip.longName}. Value : {scrip.regularMarketPrice.Fmt}. Change : {scrip.regularMarketChange.Fmt}");
+            context.Done($"Index {code}. Current value {current_price}. Change from prev close - {current_change}");
+
         }
     }
 }

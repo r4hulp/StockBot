@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace NSEBot.Service
 {
-    public interface INSEService
+    public interface IStockService
     {
         bool IsValidCode(string code);
 
@@ -26,7 +26,7 @@ namespace NSEBot.Service
 
         bool IsValidIndex(string code);
 
-        string GetIndexQuote(string code);
+        Task<IndexData> GetIndexQuote(string code);
 
         HttpRequestMessage BuildNseHeaders(HttpRequestMessage request);
 

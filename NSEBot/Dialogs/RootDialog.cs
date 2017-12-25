@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
+using Microsoft.Bot.Builder.ConnectorEx;
 using NSEBot.Service;
 
 namespace NSEBot.Dialogs
@@ -12,8 +13,6 @@ namespace NSEBot.Dialogs
     {
         private string name;
         private int age;
-
-
 
         public Task StartAsync(IDialogContext context)
         {
@@ -33,25 +32,68 @@ namespace NSEBot.Dialogs
 
         private async Task SendWelcomeMessageAsync(IDialogContext context)
         {
-            await context.PostAsync("Enter Stock codename to get current value.");
+            //await context.PostAsync("Enter Stock codename to get current value.");
+            var reply = context.MakeMessage();
 
-            context.Call(new PriceCheckDialog(), this.PriceCheckDialogResumeAfter);
+
+            var options = new[]
+            {
+                "Check Indices", "Check Stock Price"
+            };
+            reply.AddHeroCard("Select action", options, null);
+
+            await context.PostAsync(reply);
+
+            context.Wait(this.OnOptionSelected);
+
+            //context.Call(new PriceCheckDialog(), this.PriceCheckDialogResumeAfter);
         }
 
+        private async Task OnOptionSelected(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            var message = await result;
+
+            if (message.Text == "Check Indices")
+            {
+
+                //context.Call(locationDialog, this.AfterDeliveryAddress);
+                context.Call(new IndexValueDialog(), this.IndexValueDialogAfter);
+            }
+            else if (message.Text == "Check Stock Price")
+            {
+                context.Call(new PriceCheckDialog(), this.PriceCheckDialogResumeAfter);
+            }
+            else
+            {
+                //await this.StartOverAsync(context, Resources.RootDialog_Welcome_Error);
+            }
+        }
+
+        private async Task IndexValueDialogAfter(IDialogContext context, IAwaitable<string> result)
+        {
+            try
+            {
+                var message = await result;
+
+                await context.PostAsync(message);
+
+                //context.Call(new IndexValueDialog(), this.IndexValueDialogAfter);
+            }
+            catch (TooManyAttemptsException)
+            {
+                await context.PostAsync("I'm sorry, I'm having issues understanding you. Let's try again.");
+
+                await this.SendWelcomeMessageAsync(context);
+            }
+        }
         private async Task PriceCheckDialogResumeAfter(IDialogContext context, IAwaitable<string> result)
         {
             try
             {
-                this.name = await result;
-
-                INSEService nseService = new NSEService();
-
-                var resp = await nseService.GetQuote(name);
-
-                var test = resp.quoteResponse.result.FirstOrDefault().shortName;
+                var message = await result;
 
 
-                context.Call(new AgeDialog(test), this.AgeDialogResumeAfter);
+                await context.PostAsync(message);
             }
             catch (TooManyAttemptsException)
             {
@@ -61,23 +103,18 @@ namespace NSEBot.Dialogs
             }
         }
 
-        private async Task AgeDialogResumeAfter(IDialogContext context, IAwaitable<int> result)
+        private async Task StartOverAsync(IDialogContext context, string text)
         {
-            try
-            {
-                this.age = await result;
+            var message = context.MakeMessage();
+            message.Text = text;
+            await this.StartOverAsync(context, message);
+        }
 
-                await context.PostAsync($"Your name is { name } and your age is { age }.");
-
-            }
-            catch (TooManyAttemptsException)
-            {
-                await context.PostAsync("I'm sorry, I'm having issues understanding you. Let's try again.");
-            }
-            finally
-            {
-                await this.SendWelcomeMessageAsync(context);
-            }
+        private async Task StartOverAsync(IDialogContext context, IMessageActivity message)
+        {
+            await context.PostAsync(message);
+            this.order = new Models.Order();
+            await this.WelcomeMessageAsync(context);
         }
 
     }

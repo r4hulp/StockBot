@@ -15,12 +15,12 @@ using System.Web;
 
 namespace NSEBot.Service
 {
-    public class NSEService : INSEService
+    public class StockService : IStockService
     {
 
         private HttpClient client;
 
-        public NSEService()
+        public StockService()
         {
 
         }
@@ -68,9 +68,35 @@ namespace NSEBot.Service
             throw new NotImplementedException();
         }
 
-        public string GetIndexQuote(string code)
+        public async Task<IndexData> GetIndexQuote(string code)
         {
-            throw new NotImplementedException();
+            //
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+
+                    string url = $"https://query1.finance.yahoo.com/v7/finance/quote?formatted=true&crumb=PSoigjtfegE&lang=en-IN&region=IN&symbols=%5E{code}&fields=messageBoardId%2ClongName%2CshortName%2CmarketCap%2CunderlyingSymbol%2CunderlyingExchangeSymbol%2CheadSymbolAsString%2CregularMarketPrice%2CregularMarketChange%2CregularMarketChangePercent%2CregularMarketVolume%2Cuuid%2CregularMarketOpen%2CfiftyTwoWeekLow%2CfiftyTwoWeekHigh&corsDomain=in.finance.yahoo.com";
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
+                    request = BuildNseHeaders(request);
+
+                    var response = await client.SendAsync(request);
+
+                    var html = await response.Content.ReadAsStringAsync();
+
+                    var parsedData = JsonConvert.DeserializeObject<IndexData>(html);
+
+                    return parsedData;
+                };
+
+            }
+            catch (Exception ex)
+            {
+
+                //log this
+            }
+            return null;
         }
 
         public async Task<StockData> GetQuote(string code)
