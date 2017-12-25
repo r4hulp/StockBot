@@ -129,6 +129,12 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Dialogs\AgeDialog.cs" />
+    <Compile Include="Dialogs\IndexDialogs\IndiaVixDialog.cs" />
+    <Compile Include="Dialogs\IndexDialogs\NiftyBankDialog.cs" />
+    <Compile Include="Dialogs\IndexDialogs\NiftyDialog.cs" />
+    <Compile Include="Dialogs\IndexDialogs\NiftyITDialog.cs" />
+    <Compile Include="Dialogs\IndexDialogs\OtherIndexDialog.cs" />
+    <Compile Include="Dialogs\IndexDialogs\SensexDialog.cs" />
     <Compile Include="Dialogs\IndexValueDialog.cs" />
     <Compile Include="Dialogs\PriceCheckDialog.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />

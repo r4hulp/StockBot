@@ -45,8 +45,6 @@ namespace NSEBot.Dialogs
             await context.PostAsync(reply);
 
             context.Wait(this.OnOptionSelected);
-
-            //context.Call(new PriceCheckDialog(), this.PriceCheckDialogResumeAfter);
         }
 
         private async Task OnOptionSelected(IDialogContext context, IAwaitable<IMessageActivity> result)
@@ -55,8 +53,6 @@ namespace NSEBot.Dialogs
 
             if (message.Text == "Check Indices")
             {
-
-                //context.Call(locationDialog, this.AfterDeliveryAddress);
                 context.Call(new IndexValueDialog(), this.IndexValueDialogAfter);
             }
             else if (message.Text == "Check Stock Price")
@@ -112,9 +108,8 @@ namespace NSEBot.Dialogs
 
         private async Task StartOverAsync(IDialogContext context, IMessageActivity message)
         {
-            await context.PostAsync(message);
-            this.order = new Models.Order();
-            await this.WelcomeMessageAsync(context);
+            //await context.PostAsync(message);
+            await this.SendWelcomeMessageAsync(context);
         }
 
     }

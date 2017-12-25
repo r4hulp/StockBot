@@ -14,8 +14,6 @@ namespace NSEBot.Service
 
         Task<StockData> GetQuote(string code);
 
-
-
         List<string> GetTopGainers();
 
         List<string> GetTopLosers();
