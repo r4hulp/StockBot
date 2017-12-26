@@ -15,6 +15,7 @@ using System.Web;
 
 namespace NSEBot.Service
 {
+    [Serializable]
     public class StockService : IStockService
     {
 
@@ -63,9 +64,35 @@ namespace NSEBot.Service
             throw new NotImplementedException();
         }
 
-        public List<string> GetIndexList()
+        public async Task<BloombergIndices> GetIndexList()
         {
-            throw new NotImplementedException();
+            //https://www.bloombergquint.com/feapi/markets/indices/indian-indices?duration=1D&tab=all
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+
+                    string url = $"https://www.bloombergquint.com/feapi/markets/indices/indian-indices?duration=1D&tab=all";
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
+                    request = BuildNseHeaders(request);
+
+                    var response = await client.SendAsync(request);
+
+                    var html = await response.Content.ReadAsStringAsync();
+
+                    var parsedData = JsonConvert.DeserializeObject<BloombergIndices>(html);
+
+                    return parsedData;
+                };
+
+            }
+            catch (Exception ex)
+            {
+
+                //log this
+            }
+            return null;
         }
 
         public async Task<IndexData> GetIndexQuote(string code)
@@ -128,15 +155,70 @@ namespace NSEBot.Service
             return null;
         }
 
-        public List<string> GetTopGainers()
+        public async Task<TopCharts> GetTopGainers(int indexValue, string duration)
         {
-            throw new NotImplementedException();
+            //https://www.bloombergquint.com/feapi/markets/indices/stock-stats?type=top_gainers&filter_key=index&filter_value=129&duration=1D
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+
+                    string url = $"https://www.bloombergquint.com/feapi/markets/indices/stock-stats?type=top_gainers&filter_key=index&filter_value={indexValue}&duration={duration}";
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
+                    request = BuildNseHeaders(request);
+
+                    var response = await client.SendAsync(request);
+
+                    var html = await response.Content.ReadAsStringAsync();
+
+                    var parsedData = JsonConvert.DeserializeObject<TopCharts>(html);
+
+                    return parsedData;
+                };
+
+            }
+            catch (Exception ex)
+            {
+
+                //log this
+            }
+            return null;
+
         }
 
-        public List<string> GetTopLosers()
+        public async Task<TopCharts> GetTopLosers(int indexValue, string duration)
         {
-            throw new NotImplementedException();
+            //https://www.bloombergquint.com/feapi/markets/indices/stock-stats?type=top_gainers&filter_key=index&filter_value=129&duration=1D
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+
+                    string url = $"https://www.bloombergquint.com/feapi/markets/indices/stock-stats?type=top_losers&filter_key=index&filter_value={indexValue}&duration={duration}";
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
+                    request = BuildNseHeaders(request);
+
+                    var response = await client.SendAsync(request);
+
+                    var html = await response.Content.ReadAsStringAsync();
+
+                    var parsedData = JsonConvert.DeserializeObject<TopCharts>(html);
+
+                    return parsedData;
+                };
+
+            }
+            catch (Exception ex)
+            {
+
+                //log this
+            }
+            return null;
+
         }
+
 
         public bool IsValidCode(string code)
         {

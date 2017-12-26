@@ -1,5 +1,7 @@
-﻿using Microsoft.Bot.Builder.Dialogs;
+﻿using AdaptiveCards;
+using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
+using NSEBot.AdaptiveCards;
 using NSEBot.Service;
 using System;
 using System.Collections.Generic;
@@ -28,10 +30,37 @@ namespace NSEBot.Dialogs
 
             var resp = await nseService.GetQuote(message.Text);
 
-            var scrip = resp.quoteResponse.result.FirstOrDefault();
+            if (resp.quoteResponse.result.Count < 1)
+            {
+                context.Done("Could not found the company you are looking for");
+                return;
+            }
 
+            var adaptiveCard = StockCards.GetStockCard(resp);
 
-            context.Done($"Company : {scrip.longName}. Value : {scrip.regularMarketPrice.Fmt}. Change : {scrip.regularMarketChange.Fmt}");
+            adaptiveCard.Actions = new List<AdaptiveAction>()
+            {
+                new AdaptiveSubmitAction()
+                {
+                    Data = "Show Top Gainers",
+                    Title = "Check another Stock"
+                },
+                new AdaptiveSubmitAction()
+                {
+                    Data = "Show Top Gainers",
+                    Title = "Top Gainers"
+                },
+            };
+
+            var msg = context.MakeMessage();
+            msg.Attachments.Add(new Attachment()
+            {
+                Content = adaptiveCard,
+                ContentType = AdaptiveCard.ContentType
+            });
+            await context.PostAsync(msg);
+
+            context.Done("");
         }
     }
 }

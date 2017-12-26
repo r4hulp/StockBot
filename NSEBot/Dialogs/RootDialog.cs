@@ -88,7 +88,7 @@ namespace NSEBot.Dialogs
                 var message = await result;
 
 
-                await context.PostAsync(message);
+                await this.SendWelcomeMessageAsync(context);
             }
             catch (TooManyAttemptsException)
             {

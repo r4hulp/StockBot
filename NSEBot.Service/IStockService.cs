@@ -14,13 +14,13 @@ namespace NSEBot.Service
 
         Task<StockData> GetQuote(string code);
 
-        List<string> GetTopGainers();
+        Task<TopCharts> GetTopGainers(int indexValue, string duration);
 
-        List<string> GetTopLosers();
+        Task<TopCharts> GetTopLosers(int indexValue, string duration);
 
         List<string> GetAdvancesDeclines();
 
-        List<string> GetIndexList();
+        Task<BloombergIndices> GetIndexList();
 
         bool IsValidIndex(string code);
 

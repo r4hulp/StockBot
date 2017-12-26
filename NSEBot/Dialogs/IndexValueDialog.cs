@@ -2,6 +2,7 @@
 using Microsoft.Bot.Connector;
 using NSEBot.Dialogs.IndexDialogs;
 using NSEBot.Service;
+using NSEBot.Service.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +18,16 @@ namespace NSEBot.Dialogs
         private string name;
         private int attempts = 3;
 
+        private BloombergIndices indices = null;
+
 
         public async Task StartAsync(IDialogContext context)
         {
             //await context.PostAsync("Enter index code.");
+            IStockService stockService = new StockService();
+
+            indices = await stockService.GetIndexList();
+
 
             await this.ShowIndicesMessageAsync(context);
 
@@ -31,20 +38,10 @@ namespace NSEBot.Dialogs
             var message = await result;
 
 
+
             //show different indices
             await this.ShowIndicesMessageAsync(context);
 
-            //var code = message.Text;
-
-            //IStockService nseService = new StockService();
-
-            //var resp = await nseService.GetIndexQuote(code);
-
-            //var current_price = resp.QuoteResponse.Result.FirstOrDefault().RegularMarketPrice.Fmt;
-            //var current_change = resp.QuoteResponse.Result.FirstOrDefault().RegularMarketChange.Fmt;
-
-
-            //context.Done($"Index {code}. Current value {current_price}. Change from prev close - {current_change}");
 
         }
 
@@ -69,38 +66,45 @@ namespace NSEBot.Dialogs
         {
             var message = await result;
             string code = "BSESN";
+            int bloomberg_code = 1;
             if (message.Text == "SENSEX")
             {
                 code = "BSESN";
+                bloomberg_code = GetIndexCode("SENSEX");
             }
             else if (message.Text == "NIFTY 50")
             {
                 code = "NSEI";
+                bloomberg_code = GetIndexCode("NIFTY");
             }
             else if (message.Text == "NIFTY IT")
             {
                 code = "CNXIT";
+                bloomberg_code = GetIndexCode("NIFTYIT");
+
             }
             else if (message.Text == "NIFTY BANK")
             {
                 code = "NSEBANK";
+                bloomberg_code = GetIndexCode("BANKNIFTY");
             }
             else if (message.Text == "INDIA VIX")
             {
                 code = "INDIAVIX";
+                bloomberg_code = GetIndexCode("INDIA VIX");
             }
             else if (message.Text == "Other")
             {
                 context.Call(new OtherIndexDialog(), this.OtherIndexDialogResumeAfterAsync);
                 return;
             }
-            else if(message.Text == "Go back")
+            else if (message.Text == "Go back")
             {
                 context.Done("");
                 return;
             }
 
-            context.Call(new IndexDialog(code), this.SensexDialogResumeAfterAsync);
+            context.Call(new IndexDialog(code, bloomberg_code), this.IndexDialogResumeAfter);
 
         }
 
@@ -120,13 +124,20 @@ namespace NSEBot.Dialogs
             }
         }
 
-        private async Task IndiaVixDialogResumeAfterAsync(IDialogContext context, IAwaitable<string> result)
+
+        private async Task IndexDialogResumeAfter(IDialogContext context, IAwaitable<string> result)
         {
             try
             {
                 var message = await result;
-                await this.ShowIndicesMessageAsync(context);
 
+                if(message.Equals("exit", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    context.Done("");
+                    return;
+                }
+
+                await this.ShowIndicesMessageAsync(context);
             }
             catch (TooManyAttemptsException)
             {
@@ -137,70 +148,12 @@ namespace NSEBot.Dialogs
             }
         }
 
-        private async Task NiftyBankDialogResumeAfterAsync(IDialogContext context, IAwaitable<string> result)
+        private int GetIndexCode(string name)
         {
-            try
-            {
-                var message = await result;
-                await this.ShowIndicesMessageAsync(context);
-
-            }
-            catch (TooManyAttemptsException)
-            {
-                await context.PostAsync("I'm sorry, I'm having issues understanding you. Let's try again.");
-                context.Done("");
-
-                //await this.SendWelcomeMessageAsync(context);
-            }
-        }
-
-        private async Task NiftyItDialogResumeAfterAsync(IDialogContext context, IAwaitable<string> result)
-        {
-            try
-            {
-                var message = await result;
-                await this.ShowIndicesMessageAsync(context);
-
-            }
-            catch (TooManyAttemptsException)
-            {
-                await context.PostAsync("I'm sorry, I'm having issues understanding you. Let's try again.");
-                context.Done("");
-                //await this.SendWelcomeMessageAsync(context);
-            }
-                    }
-
-        private async Task NiftyDialogResumeAfterAsync(IDialogContext context, IAwaitable<string> result)
-        {
-            try
-            {
-                var message = await result;
-                await this.ShowIndicesMessageAsync(context);
-
-            }
-            catch (TooManyAttemptsException)
-            {
-                await context.PostAsync("I'm sorry, I'm having issues understanding you. Let's try again.");
-
-                context.Done("");
-
-            }
-        }
-
-        private async Task SensexDialogResumeAfterAsync(IDialogContext context, IAwaitable<string> result)
-        {
-            try
-            {
-                var message = await result;
-                await this.ShowIndicesMessageAsync(context);
-            }
-            catch (TooManyAttemptsException)
-            {
-                await context.PostAsync("I'm sorry, I'm having issues understanding you. Let's try again.");
-
-                context.Done("");
-
-            }
+            if (indices.Data.FirstOrDefault(d => d.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)) != null)
+                return indices.Data.FirstOrDefault(d => d.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)).Id;
+            else
+                return 1;
         }
     }
 }
