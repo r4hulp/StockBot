@@ -61,7 +61,7 @@ namespace NSEBot.Dialogs
             }
             else
             {
-                //await this.StartOverAsync(context, Resources.RootDialog_Welcome_Error);
+                await this.StartOverAsync(context, "Didn't get you.. Let's try again");
             }
         }
 
@@ -71,8 +71,7 @@ namespace NSEBot.Dialogs
             {
                 var message = await result;
 
-                await context.PostAsync(message);
-
+                await this.SendWelcomeMessageAsync(context);
                 //context.Call(new IndexValueDialog(), this.IndexValueDialogAfter);
             }
             catch (TooManyAttemptsException)

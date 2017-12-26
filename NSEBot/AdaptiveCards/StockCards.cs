@@ -27,6 +27,13 @@ namespace NSEBot.AdaptiveCards
             string downOrUp = Double.Parse(current_change) > 0 ? "up" : "down";
             adaptiveCard.Speak = $"{code} is trading at {current_price} a share, which is {downOrUp} by {current_change}";
 
+            string up = "▲ ";
+            string down = "▼ ";
+
+            string value_change_string = stockObject.RegularMarketChange.Raw < 0 ?
+                $"{down} {stockObject.RegularMarketChange.Fmt} ({stockObject.RegularMarketChangePercent.Fmt})" :
+                $"{up} {stockObject.RegularMarketChange.Fmt} ({stockObject.RegularMarketChangePercent.Fmt})";
+
             var body = new List<AdaptiveElement>
             {
                 //new AdaptiveContainer()
@@ -54,7 +61,7 @@ namespace NSEBot.AdaptiveCards
                 {
                     new AdaptiveTextBlock()
                     {
-                        Text = stockObject.ShortName,
+                        Text = $"{stockObject.ShortName} ({stockObject.Symbol})",
                         Size = AdaptiveTextSize.Medium,
                         IsSubtle = true
                     },
@@ -65,6 +72,7 @@ namespace NSEBot.AdaptiveCards
                     }
                 }
                 },
+
 
                 new AdaptiveContainer()
                 {
@@ -86,9 +94,9 @@ namespace NSEBot.AdaptiveCards
                                     },
                                     new AdaptiveTextBlock()
                                     {
-                                        Text = stockObject.RegularMarketChangePercent.Fmt,
+                                        Text = value_change_string,
                                         Size = AdaptiveTextSize.Small,
-                                        Color = AdaptiveTextColor.Attention
+                                        Color = stockObject.RegularMarketChange.Raw < 0 ? AdaptiveTextColor.Warning : AdaptiveTextColor.Good
                                     },
                                 }
 

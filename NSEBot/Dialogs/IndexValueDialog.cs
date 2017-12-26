@@ -55,7 +55,7 @@ namespace NSEBot.Dialogs
 
             var options = new[]
             {
-                "SENSEX", "NIFTY 50", "NIFTY BANK", "NIFTY IT", "INDIA VIX", "Other"
+                "SENSEX", "NIFTY 50", "NIFTY BANK", "NIFTY IT", "INDIA VIX", "Other", "Go back"
             };
             reply.AddHeroCard("Select Index", options, null);
 
@@ -92,6 +92,11 @@ namespace NSEBot.Dialogs
             else if (message.Text == "Other")
             {
                 context.Call(new OtherIndexDialog(), this.OtherIndexDialogResumeAfterAsync);
+                return;
+            }
+            else if(message.Text == "Go back")
+            {
+                context.Done("");
                 return;
             }
 
