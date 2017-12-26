@@ -43,8 +43,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AdaptiveCards, Version=0.5.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AdaptiveCards.0.5.1\lib\net452\AdaptiveCards.dll</HintPath>
+    <Reference Include="AdaptiveCards, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\AdaptiveCards.1.0.0-beta11\lib\net452\AdaptiveCards.dll</HintPath>
     </Reference>
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
@@ -126,15 +126,12 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdaptiveCards\StockCards.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Dialogs\AgeDialog.cs" />
-    <Compile Include="Dialogs\IndexDialogs\IndiaVixDialog.cs" />
-    <Compile Include="Dialogs\IndexDialogs\NiftyBankDialog.cs" />
-    <Compile Include="Dialogs\IndexDialogs\NiftyDialog.cs" />
-    <Compile Include="Dialogs\IndexDialogs\NiftyITDialog.cs" />
+    <Compile Include="Dialogs\IndexDialogs\IndexDialog.cs" />
     <Compile Include="Dialogs\IndexDialogs\OtherIndexDialog.cs" />
-    <Compile Include="Dialogs\IndexDialogs\SensexDialog.cs" />
     <Compile Include="Dialogs\IndexValueDialog.cs" />
     <Compile Include="Dialogs\PriceCheckDialog.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />

@@ -159,7 +159,13 @@ namespace NSEBot.Service.Models
 
     public class StockData
     {
+
+        public StockData()
+        {
+            Time = DateTime.Now;
+        }
         public QuoteResponse quoteResponse { get; set; }
+        public DateTime Time { get; set; }
     }
 
 

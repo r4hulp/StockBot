@@ -68,35 +68,35 @@ namespace NSEBot.Dialogs
         private async Task OnOptionSelected(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var message = await result;
-
+            string code = "BSESN";
             if (message.Text == "SENSEX")
             {
-                context.Call(new SensexDialog(), this.SensexDialogResumeAfterAsync);
+                code = "BSESN";
             }
             else if (message.Text == "NIFTY 50")
             {
-                context.Call(new NiftyDialog(), this.NiftyDialogResumeAfterAsync);
+                code = "NSEI";
             }
             else if (message.Text == "NIFTY IT")
             {
-                context.Call(new NiftyITDialog(), this.NiftyItDialogResumeAfterAsync);
+                code = "CNXIT";
             }
             else if (message.Text == "NIFTY BANK")
             {
-                context.Call(new NiftyBankDialog(), this.NiftyBankDialogResumeAfterAsync);
+                code = "NSEBANK";
             }
             else if (message.Text == "INDIA VIX")
             {
-                context.Call(new IndiaVixDialog(), this.IndiaVixDialogResumeAfterAsync);
+                code = "INDIAVIX";
             }
             else if (message.Text == "Other")
             {
                 context.Call(new OtherIndexDialog(), this.OtherIndexDialogResumeAfterAsync);
+                return;
             }
-            else
-            {
-                //await this.StartOverAsync(context, Resources.RootDialog_Welcome_Error);
-            }
+
+            context.Call(new IndexDialog(code), this.SensexDialogResumeAfterAsync);
+
         }
 
         private async Task OtherIndexDialogResumeAfterAsync(IDialogContext context, IAwaitable<string> result)

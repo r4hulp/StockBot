@@ -136,8 +136,14 @@ namespace NSEBot.Service.Models
 
     public class IndexData
     {
+        public IndexData()
+        {
+            Time = DateTime.Now;
+
+        }
 
         [JsonProperty("quoteResponse")]
         public IndexQuoteResponse QuoteResponse { get; set; }
+        public DateTime Time { get; set; }
     }
 }
