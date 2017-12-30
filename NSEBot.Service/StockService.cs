@@ -2,6 +2,7 @@
 using CsvHelper.Configuration;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
+using NSEBot.Service.Constants;
 using NSEBot.Service.Models;
 using System;
 using System.Collections.Generic;
@@ -73,7 +74,7 @@ namespace NSEBot.Service
                 using (HttpClient client = new HttpClient())
                 {
 
-                    string url = $"https://www.bloombergquint.com/feapi/markets/indices/indian-indices?duration=1D&tab=all";
+                    string url = Urls.BloombergIndexList;
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
                     request = BuildNseHeaders(request);
 
@@ -103,8 +104,7 @@ namespace NSEBot.Service
             {
                 using (HttpClient client = new HttpClient())
                 {
-
-                    string url = $"https://query1.finance.yahoo.com/v7/finance/quote?formatted=true&crumb=PSoigjtfegE&lang=en-IN&region=IN&symbols=%5E{code}&fields=messageBoardId%2ClongName%2CshortName%2CmarketCap%2CunderlyingSymbol%2CunderlyingExchangeSymbol%2CheadSymbolAsString%2CregularMarketPrice%2CregularMarketChange%2CregularMarketChangePercent%2CregularMarketVolume%2Cuuid%2CregularMarketOpen%2CfiftyTwoWeekLow%2CfiftyTwoWeekHigh&corsDomain=in.finance.yahoo.com";
+                    string url = string.Format(Urls.YahooIndexQuote, code);
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
                     request = BuildNseHeaders(request);
 
@@ -132,8 +132,8 @@ namespace NSEBot.Service
             {
                 using (HttpClient client = new HttpClient())
                 {
+                    string url = string.Format(Urls.YahooStockQuote, code);
 
-                    string url = $"https://query2.finance.yahoo.com/v7/finance/quote?formatted=true&crumb=PSoigjtfegE&lang=en-IN&region=IN&symbols={code}.NS&fields=messageBoardId%2ClongName%2CshortName%2CmarketCap%2CunderlyingSymbol%2CunderlyingExchangeSymbol%2CheadSymbolAsString%2CregularMarketPrice%2CregularMarketChange%2CregularMarketChangePercent%2CregularMarketVolume%2Cuuid%2CregularMarketOpen%2CfiftyTwoWeekLow%2CfiftyTwoWeekHigh&corsDomain=in.finance.yahoo.com";
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
                     request = BuildNseHeaders(request);
 
@@ -157,14 +157,12 @@ namespace NSEBot.Service
 
         public async Task<TopCharts> GetTopGainers(int indexValue, string duration)
         {
-            //https://www.bloombergquint.com/feapi/markets/indices/stock-stats?type=top_gainers&filter_key=index&filter_value=129&duration=1D
-
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
+                    string url = string.Format(Urls.BloombergTopCharts, "top_gainers", indexValue, duration);
 
-                    string url = $"https://www.bloombergquint.com/feapi/markets/indices/stock-stats?type=top_gainers&filter_key=index&filter_value={indexValue}&duration={duration}";
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
                     request = BuildNseHeaders(request);
 
@@ -189,14 +187,12 @@ namespace NSEBot.Service
 
         public async Task<TopCharts> GetTopLosers(int indexValue, string duration)
         {
-            //https://www.bloombergquint.com/feapi/markets/indices/stock-stats?type=top_gainers&filter_key=index&filter_value=129&duration=1D
-
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
 
-                    string url = $"https://www.bloombergquint.com/feapi/markets/indices/stock-stats?type=top_losers&filter_key=index&filter_value={indexValue}&duration={duration}";
+                    string url = string.Format(Urls.BloombergTopCharts, "top_losers", indexValue, duration);
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
                     request = BuildNseHeaders(request);
 

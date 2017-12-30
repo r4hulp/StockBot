@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants\Urls.cs" />
     <Compile Include="Enums\TrendType.cs" />
     <Compile Include="IStockService.cs" />
     <Compile Include="Models\BloombergIndices.cs" />
