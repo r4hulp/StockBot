@@ -38,20 +38,6 @@ namespace NSEBot.Dialogs
 
             var adaptiveCard = StockCards.GetStockCard(resp);
 
-            adaptiveCard.Actions = new List<AdaptiveAction>()
-            {
-                new AdaptiveSubmitAction()
-                {
-                    Data = "Show Top Gainers",
-                    Title = "Check another Stock"
-                },
-                new AdaptiveSubmitAction()
-                {
-                    Data = "Show Top Gainers",
-                    Title = "Top Gainers"
-                },
-            };
-
             var msg = context.MakeMessage();
             msg.Attachments.Add(new Attachment()
             {
