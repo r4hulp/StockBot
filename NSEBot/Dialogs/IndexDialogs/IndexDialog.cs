@@ -32,48 +32,57 @@ namespace NSEBot.Dialogs.IndexDialogs
 
         private async Task MessageReceivedAsync(IDialogContext context)
         {
-            IStockService nseService = new StockService();
-
-            var data = await nseService.GetIndexQuote(code);
-
-            if (data.QuoteResponse.Result.Count == 0)
+            try
             {
-                await context.PostAsync("Could not fetch values for selected Index");
+                IStockService nseService = new StockService();
 
-                context.Done("Could not fetch values for selected Index");
-            }
-            var rich_msg = context.MakeMessage();
+                var data = await nseService.GetIndexQuote(code);
 
-            var adaptiveCard = StockCards.GetIndexCard(data);
+                if (data.QuoteResponse.Result.Count == 0)
+                {
+                    await context.PostAsync("Could not fetch values for selected Index");
 
-            adaptiveCard.Actions = new List<AdaptiveAction>()
-            {
-                new AdaptiveSubmitAction()
-                {
-                    Data = "Show Top Gainers",
-                    Title = "Top Gainers"
-                },
-                new AdaptiveSubmitAction()
-                {
-                    Data = "Show Top Losers",
-                    Title = "Top Losers"
-                },
-                new AdaptiveSubmitAction()
-                {
-                    Data = "Go back",
-                    Title = "Go back"
+                    context.Done("Could not fetch values for selected Index");
                 }
-            };
+                var rich_msg = context.MakeMessage();
 
-            rich_msg.Attachments.Add(new Attachment()
+                var adaptiveCard = StockCards.GetIndexCard(data);
+
+            //    adaptiveCard.Actions = new List<AdaptiveAction>()
+            //{
+            //    new AdaptiveSubmitAction()
+            //    {
+            //        Data = "Show Top Gainers",
+            //        Title = "Top Gainers"
+            //    },
+            //    new AdaptiveSubmitAction()
+            //    {
+            //        Data = "Show Top Losers",
+            //        Title = "Top Losers"
+            //    },
+            //    new AdaptiveSubmitAction()
+            //    {
+            //        Data = "Go back",
+            //        Title = "Go back"
+            //    }
+            //};
+
+                rich_msg.Attachments.Add(new Attachment()
+                {
+                    Content = adaptiveCard,
+                    ContentType = AdaptiveCard.ContentType
+                });
+
+                await context.PostAsync(rich_msg);
+
+                context.Wait(this.OnOptionSelected);
+            }
+            catch (Exception ex)
             {
-                Content = adaptiveCard,
-                ContentType = AdaptiveCard.ContentType
-            });
 
-            await context.PostAsync(rich_msg);
-
-            context.Wait(this.OnOptionSelected);
+                await context.PostAsync(ex.Message);
+                context.Done("");
+            }
 
         }
 
@@ -108,16 +117,20 @@ namespace NSEBot.Dialogs.IndexDialogs
         private async Task ShowTopCharts(IDialogContext context, bool gainer)
         {
 
-            var trend = gainer ? TrendType.Gainer : TrendType.Loser;
-            var reply = context.MakeMessage();
-
-            IStockService stockService = new StockService();
-            var topCharts = gainer ? await stockService.GetTopGainers(bloomberg_code, "1D") : await stockService.GetTopLosers(bloomberg_code, "1D");
-
-            var adaptiveCard = StockCards.GetTopCharts(topCharts, trend);
-
-            adaptiveCard.Actions = new List<AdaptiveAction>()
+            try
             {
+                await context.PostAsync("Preparing a chart");
+                var trend = gainer ? TrendType.Gainer : TrendType.Loser;
+                var reply = context.MakeMessage();
+
+                IStockService stockService = new StockService();
+                var topCharts = gainer ? await stockService.GetTopGainers(bloomberg_code, "1D") : await stockService.GetTopLosers(bloomberg_code, "1D");
+
+                var adaptiveCard = StockCards.GetTopCharts(topCharts, trend);
+                
+                adaptiveCard.Actions = new List<AdaptiveAction>()
+            {
+
                 new AdaptiveSubmitAction()
                 {
                     Data = "Show Indices",
@@ -128,17 +141,25 @@ namespace NSEBot.Dialogs.IndexDialogs
                     Data = "Go to main menu",
                     Title = "Main Menu"
                 }
-            }; 
+            };
 
-            reply.Attachments.Add(new Attachment()
+                reply.Attachments.Add(new Attachment()
+                {
+                    Content = adaptiveCard,
+                    ContentType = AdaptiveCard.ContentType
+                });
+
+                await context.PostAsync(reply);
+
+                context.Wait(this.OnMenuOptionSelectedAsync);
+            }
+            catch (Exception ex)
             {
-                Content = adaptiveCard,
-                ContentType = AdaptiveCard.ContentType
-            });
 
-            await context.PostAsync(reply);
+                await context.PostAsync(ex.Message);
 
-            context.Wait(this.OnMenuOptionSelectedAsync);
+                context.Done("");
+            }
 
         }
 
@@ -155,6 +176,7 @@ namespace NSEBot.Dialogs.IndexDialogs
                     break;
                 case "Go to main menu":
                     context.Done("Exit");
+
                     break;
                 default:
                     gainer = true;
