@@ -1,4 +1,3 @@
-<br><br>
 <p align="center">
 Stock Bot (India)
 </p>
