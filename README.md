@@ -6,6 +6,7 @@ Stock Bot (India)
   Get realtime stock prices right in your chat window
 </p>
 
+Demo at - https://r4hulp.github.io/StockBot
 
 ### :package: Features *(for now)*
 - Get real time prices of indices
