@@ -6,6 +6,7 @@ Stock Bot (India)
   Get realtime stock prices right in your chat window
 </p>
 
+Demo at - https://r4hulp.github.io/StockBot
 
 ### :package: Features *(for now)*
 - Get real time prices of indices
@@ -14,9 +15,9 @@ Stock Bot (India)
 
 
 ### :checkered_flag: Roadmap
-Here is what **is planed** for future releases of (Un)colored. These lists **can change** at any time and tasks can be added, moved, modified or deleted for several reasons, including **feasibility** and **performance impact**.
-
-This **public repository** contains released versions of (Un)colored and their source code, **the latest development/test** version of the (Un)colored source code **is on a private repository**.
+- Charts
+- Bot notifications based on strong movements of stocks in your portfolio
+- You suggest.
 
 ### :factory: Changelog
 
