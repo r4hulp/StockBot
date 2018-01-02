@@ -1,4 +1,4 @@
-## Welcome to GitHub Pages
+## Welcome to Bot Framework
 
 You can use the [editor on GitHub](https://github.com/r4hulp/StockBot/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
 
