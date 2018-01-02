@@ -1,37 +1,51 @@
-## Welcome to Bot Framework
+<p align="center">
+Stock Bot (India)
+</p>
 
-You can use the [editor on GitHub](https://github.com/r4hulp/StockBot/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+<p align="center">
+  Get realtime stock prices right in your chat window
+</p>
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-### Markdown
+### :package: Features *(for now)*
+- Get real time prices of indices
+- Get real time top gainers and losers for indices
+- Get real time values of NSE scrips (stocks)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
-```markdown
-Syntax highlighted code block
+### :checkered_flag: Roadmap
+Here is what **is planed** for future releases of (Un)colored. These lists **can change** at any time and tasks can be added, moved, modified or deleted for several reasons, including **feasibility** and **performance impact**.
 
-# Header 1
-## Header 2
-### Header 3
+This **public repository** contains released versions of (Un)colored and their source code, **the latest development/test** version of the (Un)colored source code **is on a private repository**.
 
-- Bulleted
-- List
+### :factory: Changelog
 
-1. Numbered
-2. List
+If you want more details about what was done, see [the Changelog](./CHANGELOG.md).
 
-**Bold** and _Italic_ and `Code` text
+##### version 0.0.1
+- Initial release
+- Adaptive cards for better representation of chat replies
+- Dialog Flows
 
-[Link](url) and ![Image](src)
-```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
 
-### Jekyll Themes
+### :nut_and_bolt: Technical Details
+Stock Bot is based on Microsoft's Bot Framework, `Adaptive Cards` and Yahoo's Finance data.
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/r4hulp/StockBot/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+- **Bot Framework** : The Microsoft Bot Framework provides just what you need to build and connect intelligent bots that interact naturally wherever your users are talking, from text/sms to Skype, Slack, Office 365 mail and other popular services.
+- **Adaptive Cards** - Adaptive Cards are a new way for developers to exchange card content in a common and consistent way.
 
-### Support or Contact
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+### :warning: Known Issues
+- *[Major issue]* `Adaptive cards` is still in preview and full support is gradually rolling out for chat clients.
+
+### Supported Platforms
+| Platform | Support |
+| ------------- | ------------- |
+|Web Embed| :white_check_mark: Supported  |
+|Microsoft Teams| :x: Full support coming in January  |
+|Skype| :x: Full support coming in January  |
+
+
+### :page_facing_up: License
+Stock bot is released under the [MIT](https://github.com/r4hulp/StockBot/blob/dev/README.md). More information on https://choosealicense.com/licenses/mit/
