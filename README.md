@@ -21,8 +21,6 @@ Demo at - https://r4hulp.github.io/StockBot
 
 ### :factory: Changelog
 
-If you want more details about what was done, see [the Changelog](./CHANGELOG.md).
-
 ##### version 0.0.1
 - Initial release
 - Adaptive cards for better representation of chat replies
